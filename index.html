@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+  <title>Super Tiny Small Todo App</title>
+</head>
+<body>
+  <todoapp></todoapp>
+  <script src='TodoApp.js'></script>
+  <script>
+    var app = new TodoApp({
+      target: document.querySelector( 'todoapp' ),
+      data: {
+        todos: [],
+        newTodo :''
+      }
+    });
+  </script>
+</body>
+</html>

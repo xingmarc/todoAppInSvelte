@@ -1,0 +1,28 @@
+
+<h1>To do App</h1>
+
+<input bind:value='newTodo' placeholder='enter a new Todo'/>
+
+<button on:click='set({todos: todos.concat(newTodo), newTodo: ''})'>
+  Add a new Todo!
+</button>
+
+<ul>
+  {{#each todos as todo, index}}
+    <li>
+      <span>
+        {{todo}}
+      </span>
+
+      <button on:click='set({todos: todos.slice(0, index).concat(todos.slice(index + 1))})'>
+        Done
+      </button>
+    </li>
+  {{/each}}
+</ul>
+
+{{#if todos.length !== 0}}
+  <button on:click='set({todos: [], newTodo: ''})'>
+    Clear All
+  </button>
+{{/if}}
