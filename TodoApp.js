@@ -1,337 +1,400 @@
 var TodoApp = (function () { 'use strict';
 
-function renderMainFragment ( root, component, target ) {
-	var h1 = document.createElement( 'h1' );
+function renderMainFragment ( root, component ) {
+	var h1 = createElement( 'h1' );
 	
-	var text = document.createTextNode( "To do App" );
-	h1.appendChild( text );
+	appendNode( createText( "To do App" ), h1 );
+	var text1 = createText( "\n\n" );
 	
-	target.appendChild( h1 )
+	var input = createElement( 'input' );
 	
-	var text1 = document.createTextNode( "\n\n" );
-	target.appendChild( text1 );
-	
-	var input = document.createElement( 'input' );
 	var input_updating = false;
 	
 	function inputChangeHandler () {
 		input_updating = true;
-		component.set({ newTodo: input.value });
+		component._set({ newTodo: input.value });
 		input_updating = false;
 	}
 	
-	input.addEventListener( 'input', inputChangeHandler, false );
-	input.value = root.newTodo;
+	addEventListener( input, 'input', inputChangeHandler );
+	
 	input.placeholder = "enter a new Todo";
 	
-	target.appendChild( input )
+	input.__svelte = {
+		root: root
+	};
 	
-	var text2 = document.createTextNode( "\n\n" );
-	target.appendChild( text2 );
+	input.value = root.newTodo;
 	
-	var button = document.createElement( 'button' );
+	var text2 = createText( "\n\n" );
+	
+	var button = createElement( 'button' );
+	
 	function clickHandler ( event ) {
 		var root = this.__svelte.root;
 		
-		component.set({todos: root.todos.concat(root.newTodo), newTodo: ''});
+		component.set({todos: root.todos.concat(root.newTodo), newTodo: ""});
 	}
 	
-	button.addEventListener( 'click', clickHandler, false );
+	addEventListener( button, 'click', clickHandler );
+	
 	button.__svelte = {
 		root: root
 	};
 	
-	var text3 = document.createTextNode( "Add a new Todo!" );
-	button.appendChild( text3 );
+	appendNode( createText( "Add a new Todo!" ), button );
+	var text4 = createText( "\n\n" );
 	
-	target.appendChild( button )
+	var ul = createElement( 'ul' );
 	
-	var text4 = document.createTextNode( "\n\n" );
-	target.appendChild( text4 );
+	var eachBlock_anchor = createComment();
+	appendNode( eachBlock_anchor, ul );
+	var eachBlock_value = root.todos;
+	var eachBlock_iterations = [];
 	
-	var ul = document.createElement( 'ul' );
-	
-	var eachBlock_0_anchor = document.createComment( "#each todos" );
-	ul.appendChild( eachBlock_0_anchor );
-	
-	var eachBlock_0_value = root.todos;
-	var eachBlock_0_fragment = document.createDocumentFragment();
-	var eachBlock_0_iterations = [];
-	
-	for ( var i = 0; i < eachBlock_0_value.length; i += 1 ) {
-		eachBlock_0_iterations[i] = renderEachBlock_0( root, eachBlock_0_value, eachBlock_0_value[i], i, component, eachBlock_0_fragment );
+	for ( var i = 0; i < eachBlock_value.length; i += 1 ) {
+		eachBlock_iterations[i] = renderEachBlock( root, eachBlock_value, eachBlock_value[i], i, component );
+		eachBlock_iterations[i].mount( eachBlock_anchor.parentNode, eachBlock_anchor );
 	}
 	
-	eachBlock_0_anchor.parentNode.insertBefore( eachBlock_0_fragment, eachBlock_0_anchor );
+	var text5 = createText( "\n\n" );
+	var ifBlock_anchor = createComment();
 	
-	target.appendChild( ul )
+	function getBlock ( root ) {
+		if ( root.todos.length !== 0 ) return renderIfBlock_0;
+		return null;
+	}
 	
-	var text5 = document.createTextNode( "\n\n" );
-	target.appendChild( text5 );
-	
-	var ifBlock_0_anchor = document.createComment( "#if todos.length !== 0" );
-	target.appendChild( ifBlock_0_anchor );
-	
-	var ifBlock_0 = root.todos.length !== 0 ? renderIfBlock_0( root, component, target, ifBlock_0_anchor ) : null;
+	var currentBlock = getBlock( root );
+	var ifBlock = currentBlock && currentBlock( root, component );
 
 	return {
+		mount: function ( target, anchor ) {
+			insertNode( h1, target, anchor );
+			insertNode( text1, target, anchor );
+			insertNode( input, target, anchor );
+			insertNode( text2, target, anchor );
+			insertNode( button, target, anchor );
+			insertNode( text4, target, anchor );
+			insertNode( ul, target, anchor );
+			insertNode( text5, target, anchor );
+			insertNode( ifBlock_anchor, target, anchor );
+			if ( ifBlock ) ifBlock.mount( ifBlock_anchor.parentNode, ifBlock_anchor );
+		},
+		
 		update: function ( changed, root ) {
-			if ( !input_updating ) input.value = root.newTodo;
+			var __tmp;
+		
+			if ( !input_updating ) {
+				input.value = root.newTodo;
+			}
+			
+			input.__svelte.root = root;
 			
 			button.__svelte.root = root;
 			
-			var eachBlock_0_value = root.todos;
+			var eachBlock_value = root.todos;
 			
-			for ( var i = 0; i < eachBlock_0_value.length; i += 1 ) {
-				if ( !eachBlock_0_iterations[i] ) {
-					eachBlock_0_iterations[i] = renderEachBlock_0( root, eachBlock_0_value, eachBlock_0_value[i], i, component, eachBlock_0_fragment );
+			for ( var i = 0; i < eachBlock_value.length; i += 1 ) {
+				if ( !eachBlock_iterations[i] ) {
+					eachBlock_iterations[i] = renderEachBlock( root, eachBlock_value, eachBlock_value[i], i, component );
+					eachBlock_iterations[i].mount( eachBlock_anchor.parentNode, eachBlock_anchor );
 				} else {
-					eachBlock_0_iterations[i].update( changed, root, eachBlock_0_value, eachBlock_0_value[i], i );
+					eachBlock_iterations[i].update( changed, root, eachBlock_value, eachBlock_value[i], i );
 				}
 			}
 			
-			for ( var i = eachBlock_0_value.length; i < eachBlock_0_iterations.length; i += 1 ) {
-				eachBlock_0_iterations[i].teardown( true );
-			}
+			teardownEach( eachBlock_iterations, true, eachBlock_value.length );
 			
-			eachBlock_0_anchor.parentNode.insertBefore( eachBlock_0_fragment, eachBlock_0_anchor );
-			eachBlock_0_iterations.length = eachBlock_0_value.length;
+			eachBlock_iterations.length = eachBlock_value.length;
 			
-			if ( root.todos.length !== 0 ) {
-				if ( !ifBlock_0 ) {
-					ifBlock_0 = renderIfBlock_0( root, component, target, ifBlock_0_anchor );
-				} else {
-					ifBlock_0.update( changed, root );
-				}
-			}
-			
-			else {
-				if ( ifBlock_0 ) {
-					ifBlock_0.teardown( true );
-					ifBlock_0 = null;
-				}
+			var _currentBlock = currentBlock;
+			currentBlock = getBlock( root );
+			if ( _currentBlock === currentBlock && ifBlock) {
+				ifBlock.update( changed, root );
+			} else {
+				if ( ifBlock ) ifBlock.teardown( true );
+				ifBlock = currentBlock && currentBlock( root, component );
+				if ( ifBlock ) ifBlock.mount( ifBlock_anchor.parentNode, ifBlock_anchor );
 			}
 		},
-
+		
 		teardown: function ( detach ) {
-			if ( detach ) h1.parentNode.removeChild( h1 );
+			removeEventListener( input, 'input', inputChangeHandler );
+			removeEventListener( button, 'click', clickHandler );
 			
-			text.parentNode.removeChild( text );
+			teardownEach( eachBlock_iterations, false );
 			
-			text1.parentNode.removeChild( text1 );
+			if ( ifBlock ) ifBlock.teardown( detach );
 			
-			input.removeEventListener( 'input', inputChangeHandler, false );
-			if ( detach ) input.parentNode.removeChild( input );
-			
-			text2.parentNode.removeChild( text2 );
-			
-			button.removeEventListener( 'click', clickHandler, false );
-			if ( detach ) button.parentNode.removeChild( button );
-			
-			text3.parentNode.removeChild( text3 );
-			
-			text4.parentNode.removeChild( text4 );
-			
-			if ( detach ) ul.parentNode.removeChild( ul );
-			
-			for ( let i = 0; i < eachBlock_0_iterations.length; i += 1 ) {
-				eachBlock_0_iterations[i].teardown( detach );
+			if ( detach ) {
+				detachNode( h1 );
+				detachNode( text1 );
+				detachNode( input );
+				detachNode( text2 );
+				detachNode( button );
+				detachNode( text4 );
+				detachNode( ul );
+				detachNode( text5 );
+				detachNode( ifBlock_anchor );
 			}
-			
-			if ( detach ) eachBlock_0_anchor.parentNode.removeChild( eachBlock_0_anchor );
-			
-			text5.parentNode.removeChild( text5 );
-			
-			if ( ifBlock_0 ) ifBlock_0.teardown( detach );
-			if ( detach ) ifBlock_0_anchor.parentNode.removeChild( ifBlock_0_anchor );
 		}
 	};
 }
 
-function renderIfBlock_0 ( root, component, target, anchor ) {
-	var button = document.createElement( 'button' );
+function renderIfBlock_0 ( root, component ) {
+	var button = createElement( 'button' );
+	
 	function clickHandler ( event ) {
-		component.set({todos: [], newTodo: ''});
+		component.set({todos: [], newTodo: ""});
 	}
 	
-	button.addEventListener( 'click', clickHandler, false );
+	addEventListener( button, 'click', clickHandler );
 	
-	var text = document.createTextNode( "Clear All" );
-	button.appendChild( text );
-	
-	anchor.parentNode.insertBefore( button, anchor )
+	appendNode( createText( "Clear All" ), button );
 
 	return {
-		update: function ( changed, root ) {
-			
+		mount: function ( target, anchor ) {
+			insertNode( button, target, anchor );
 		},
-
+		
+		update: noop,
+		
 		teardown: function ( detach ) {
-			button.removeEventListener( 'click', clickHandler, false );
-			if ( detach ) button.parentNode.removeChild( button );
+			removeEventListener( button, 'click', clickHandler );
 			
-			text.parentNode.removeChild( text );
+			if ( detach ) {
+				detachNode( button );
+			}
 		}
 	};
 }
 
-function renderEachBlock_0 ( root, eachBlock_0_value, todo, index, component, target ) {
-	var li = document.createElement( 'li' );
+function renderEachBlock ( root, eachBlock_value, todo, index, component ) {
+	var li = createElement( 'li' );
 	
-	var span = document.createElement( 'span' );
+	var span = createElement( 'span' );
 	
-	var text = document.createTextNode( todo );
-	span.appendChild( text );
+	appendNode( span, li );
+	var last_text = todo
+	var text = createText( last_text );
+	appendNode( text, span );
+	appendNode( createText( "\n\n      " ), li );
 	
-	li.appendChild( span )
+	var button = createElement( 'button' );
 	
-	var text1 = document.createTextNode( "\n\n      " );
-	li.appendChild( text1 );
-	
-	var button = document.createElement( 'button' );
 	function clickHandler ( event ) {
 		var root = this.__svelte.root;
-		var eachBlock_0_value = this.__svelte.eachBlock_0_value, index = this.__svelte.index, todo = eachBlock_0_value[index]
+		var eachBlock_value = this.__svelte.eachBlock_value, index = this.__svelte.index, todo = eachBlock_value[index]
 		
-		component.set({todos: root.todos.slice(0, index).concat(root.todos.slice(index + 1))});
+		component.set({ todos: root.todos.slice(0, index).concat(root.todos.slice(index + 1)) });
 	}
 	
-	button.addEventListener( 'click', clickHandler, false );
+	addEventListener( button, 'click', clickHandler );
+	
 	button.__svelte = {
 		root: root,
-		eachBlock_0_value: eachBlock_0_value,
+		eachBlock_value: eachBlock_value,
 		index: index
 	};
 	
-	var text2 = document.createTextNode( "Done" );
-	button.appendChild( text2 );
-	
-	li.appendChild( button )
-	
-	target.appendChild( li )
+	appendNode( button, li );
+	appendNode( createText( "Done" ), button );
 
 	return {
-		update: function ( changed, root, eachBlock_0_value, todo, index ) {
-			var todo = eachBlock_0_value[index];
-			
-			text.data = todo;
+		mount: function ( target, anchor ) {
+			insertNode( li, target, anchor );
+		},
+		
+		update: function ( changed, root, eachBlock_value, todo, index ) {
+			var __tmp;
+		
+			if ( ( __tmp = todo ) !== last_text ) {
+				text.data = last_text = __tmp;
+			}
 			
 			button.__svelte.root = root;
-			button.__svelte.eachBlock_0_value = eachBlock_0_value;
+			button.__svelte.eachBlock_value = eachBlock_value;
 			button.__svelte.index = index;
 		},
-
+		
 		teardown: function ( detach ) {
-			if ( detach ) li.parentNode.removeChild( li );
+			removeEventListener( button, 'click', clickHandler );
 			
-			
-			
-			text1.parentNode.removeChild( text1 );
-			
-			button.removeEventListener( 'click', clickHandler, false );
-			
-			text2.parentNode.removeChild( text2 );
+			if ( detach ) {
+				detachNode( li );
+			}
 		}
 	};
 }
 
 function TodoApp ( options ) {
-	var component = this;
-	var state = options.data || {};
-
-	var observers = {
-		immediate: Object.create( null ),
-		deferred: Object.create( null )
+	options = options || {};
+	this._state = options.data || {};
+	
+	this._observers = {
+		pre: Object.create( null ),
+		post: Object.create( null )
 	};
+	
+	this._handlers = Object.create( null );
+	
+	this._root = options._root;
+	this._yield = options._yield;
+	
+	this._torndown = false;
+	
+	this._fragment = renderMainFragment( this._state, this );
+	if ( options.target ) this._fragment.mount( options.target, null );
+}
 
-	var callbacks = Object.create( null );
+TodoApp.prototype.get = get;
+TodoApp.prototype.fire = fire;
+TodoApp.prototype.observe = observe;
+TodoApp.prototype.on = on;
+TodoApp.prototype.set = set;
+TodoApp.prototype._flush = _flush;
 
-	function dispatchObservers ( group, newState, oldState ) {
-		for ( const key in group ) {
-			if ( !( key in newState ) ) continue;
+TodoApp.prototype._set = function _set ( newState ) {
+	var oldState = this._state;
+	this._state = Object.assign( {}, oldState, newState );
+	
+	dispatchObservers( this, this._observers.pre, newState, oldState );
+	if ( this._fragment ) this._fragment.update( newState, this._state );
+	dispatchObservers( this, this._observers.post, newState, oldState );
+};
 
-			const newValue = newState[ key ];
-			const oldValue = oldState[ key ];
+TodoApp.prototype.teardown = TodoApp.prototype.destroy = function destroy ( detach ) {
+	this.fire( 'destroy' );
 
-			if ( newValue === oldValue && typeof newValue !== 'object' ) continue;
+	this._fragment.teardown( detach !== false );
+	this._fragment = null;
 
-			const callbacks = group[ key ];
-			if ( !callbacks ) continue;
+	this._state = {};
+	this._torndown = true;
+};
 
-			for ( let i = 0; i < callbacks.length; i += 1 ) {
-				const callback = callbacks[i];
-				if ( callback.__calling ) continue;
+function createElement( name ) {
+	return document.createElement( name );
+}
 
-				callback.__calling = true;
-				callback.call( component, newValue, oldValue );
-				callback.__calling = false;
-			}
-		}
+function detachNode( node ) {
+	node.parentNode.removeChild( node );
+}
+
+function insertNode( node, target, anchor ) {
+	target.insertBefore( node, anchor );
+}
+
+function createText( data ) {
+	return document.createTextNode( data );
+}
+
+function appendNode( node, target ) {
+	target.appendChild( node );
+}
+
+function addEventListener( node, event, handler ) {
+	node.addEventListener ( event, handler, false );
+}
+
+function removeEventListener( node, event, handler ) {
+	node.removeEventListener ( event, handler, false );
+}
+
+function createComment() {
+	return document.createComment( '' );
+}
+
+function teardownEach( iterations, detach, start ) {
+	for ( var i = ( start || 0 ); i < iterations.length; i += 1 ) {
+		iterations[i].teardown( detach );
 	}
+}
 
-	this.fire = function fire ( eventName, data ) {
-		var handlers = eventName in callbacks && callbacks[ eventName ].slice();
-		if ( !handlers ) return;
+function noop() {}
 
-		for ( var i = 0; i < handlers.length; i += 1 ) {
-			handlers[i].call( this, data );
-		}
-	};
+function dispatchObservers( component, group, newState, oldState ) {
+	for ( var key in group ) {
+		if ( !( key in newState ) ) continue;
 
-	this.get = function get ( key ) {
-		return state[ key ];
-	};
+		var newValue = newState[ key ];
+		var oldValue = oldState[ key ];
 
-	this.set = function set ( newState ) {
-		const oldState = state;
-		state = Object.assign( {}, oldState, newState );
-		
-		dispatchObservers( observers.immediate, newState, oldState );
-		if ( mainFragment ) mainFragment.update( newState, state );
-		dispatchObservers( observers.deferred, newState, oldState );
-	};
+		if ( newValue === oldValue && typeof newValue !== 'object' ) continue;
 
-	this.observe = function ( key, callback, options = {} ) {
-		const group = options.defer ? observers.deferred : observers.immediate;
+		var callbacks = group[ key ];
+		if ( !callbacks ) continue;
 
-		( group[ key ] || ( group[ key ] = [] ) ).push( callback );
+		for ( var i = 0; i < callbacks.length; i += 1 ) {
+			var callback = callbacks[i];
+			if ( callback.__calling ) continue;
 
-		if ( options.init !== false ) {
 			callback.__calling = true;
-			callback.call( component, state[ key ] );
+			callback.call( component, newValue, oldValue );
 			callback.__calling = false;
 		}
+	}
+}
 
-		return {
-			cancel () {
-				const index = group[ key ].indexOf( callback );
-				if ( ~index ) group[ key ].splice( index, 1 );
-			}
-		};
+function get( key ) {
+	return key ? this._state[ key ] : this._state;
+}
+
+function fire( eventName, data ) {
+	var handlers = eventName in this._handlers && this._handlers[ eventName ].slice();
+	if ( !handlers ) return;
+
+	for ( var i = 0; i < handlers.length; i += 1 ) {
+		handlers[i].call( this, data );
+	}
+}
+
+function observe( key, callback, options ) {
+	var group = ( options && options.defer ) ? this._observers.pre : this._observers.post;
+
+	( group[ key ] || ( group[ key ] = [] ) ).push( callback );
+
+	if ( !options || options.init !== false ) {
+		callback.__calling = true;
+		callback.call( this, this._state[ key ] );
+		callback.__calling = false;
+	}
+
+	return {
+		cancel: function () {
+			var index = group[ key ].indexOf( callback );
+			if ( ~index ) group[ key ].splice( index, 1 );
+		}
 	};
+}
 
-	this.on = function on ( eventName, handler ) {
-		const handlers = callbacks[ eventName ] || ( callbacks[ eventName ] = [] );
-		handlers.push( handler );
+function on( eventName, handler ) {
+	if ( eventName === 'teardown' ) return this.on( 'destroy', handler );
 
-		return {
-			cancel: function () {
-				const index = handlers.indexOf( handler );
-				if ( ~index ) handlers.splice( index, 1 );
-			}
-		};
+	var handlers = this._handlers[ eventName ] || ( this._handlers[ eventName ] = [] );
+	handlers.push( handler );
+
+	return {
+		cancel: function () {
+			var index = handlers.indexOf( handler );
+			if ( ~index ) handlers.splice( index, 1 );
+		}
 	};
+}
 
-	this.teardown = function teardown ( detach ) {
-		this.fire( 'teardown' );
+function set( newState ) {
+	this._set( newState );
+	( this._root || this )._flush();
+}
 
-		mainFragment.teardown( detach !== false );
-		mainFragment = null;
+function _flush() {
+	if ( !this._renderHooks ) return;
 
-		state = {};
-	};
-
-	var mainFragment = renderMainFragment( state, this, options.target );
+	while ( this._renderHooks.length ) {
+		var hook = this._renderHooks.pop();
+		hook.fn.call( hook.context );
+	}
 }
 
 return TodoApp;
